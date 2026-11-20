@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Pembayaran · KasRT{% endblock %}
+{% block content %}
+<h1>Pembayaran Iuran</h1>
+{% if error %}
+  <p class="error" role="alert">{{ error }}</p>
+{% endif %}
+<form method="post" action="{{ url_for('payments.payments') }}">
+  {{ csrf_token() }}
+  <select name="house_id" required>
+    <option value="">Pilih rumah</option>
+    {% for h in houses %}
+      <option value="{{ h.id }}">{{ h.blok }}/{{ h.nomor }} — {{ h.nama_penghuni }}</option>
+    {% endfor %}
+  </select>
+  <select name="dues_type_id" required>
+    <option value="">Pilih jenis iuran</option>
+    {% for t in dues_types %}
+      <option value="{{ t.id }}">{{ t.nama }}</option>
+    {% endfor %}
+  </select>
+  <input type="number" name="amount" placeholder="Nominal (Rp)" min="1" required />
+  <input type="text" name="keterangan" placeholder="Keterangan" />
+  <select name="kelebihan">
+    <option value="B">Sumbangan warga (opsi B)</option>
+    <option value="A">Iuran bulan berikutnya (opsi A)</option>
+  </select>
+  <input type="text" name="bulan" placeholder="Koma, mis. 2026-12,2027-01 (opsional: bayar di muka)" />
+  <button type="submit">Catat Pembayaran</button>
+</form>
+<h2>Daftar Transaksi</h2>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Trx No</th><th>Jenis</th><th>Harga</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.trx_no }}</td>
+        <td>{{ t.jenis }}</td>
+        <td>{{ t.jumlah }}</td>
+        <td>{{ t.status }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

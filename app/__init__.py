@@ -10,12 +10,13 @@ from app.extensions import csrf, db, limiter, login_manager
 from app.models.user import User
 from app.routes import auth as auth_routes
 from app.routes import dashboard as dashboard_routes
-from app.routes import health as health_routes
-from app.routes import houses as houses_routes
 from app.routes import dues as dues_routes
+from app.routes import houses as houses_routes
 from app.routes import categories as categories_routes
 from app.routes import users as users_routes
 from app.routes import settings as settings_routes
+from app.routes import payments as payments_routes
+from app.routes import health as health_routes
 
 migrate = Migrate()
 log = logging.getLogger("kasrt")
@@ -111,4 +112,5 @@ def create_app(config_object=None):
     app.register_blueprint(categories_routes.categories_bp)
     app.register_blueprint(users_routes.users_bp)
     app.register_blueprint(settings_routes.settings_bp)
+    app.register_blueprint(payments_routes.payments_bp)
     return app
