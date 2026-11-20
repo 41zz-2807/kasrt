@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Pengguna · KasRT{% endblock %}
+{% block content %}
+<h1>Pengguna</h1>
+{% if error %}
+  <p class="error" role="alert">{{ error }}</p>
+{% endif %}
+<form method="post" action="{{ url_for('users.users') }}">
+  {{ csrf_token() }}
+  <input type="text" name="username" placeholder="Username" required />
+  <input type="email" name="email" placeholder="Email" />
+  <select name="role" required>
+    {% for r in ["superuser", "ketua_rt", "bendahara", "warga"] %}
+      <option value="{{ r }}">{{ r }}</option>
+    {% endfor %}
+  </select>
+  <input type="password" name="password" placeholder="Password awal" required />
+  <label><input type="checkbox" name="is_active" value="1" /> Aktif</label>
+  <label><input type="checkbox" name="must_change_password" value="1" /> Wajib ganti password</label>
+  <button type="submit">Buat</button>
+</form>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Aktif</th><th>Aksi</th></tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.role }}</td>
+        <td>{{ "Ya" if u.is_active else "Tidak" }}</td>
+        <td>
+          <form method="post" action="{{ url_for('users.users_toggle', id=u.id) }}">
+            {{ csrf_token() }}
+            <button type="submit">Toggle aktif</button>
+          </form>
+          <form method="post" action="{{ url_for('users.users_reset_password', id=u.id) }}">
+            {{ csrf_token() }}
+            <input type="password" name="password" placeholder="Password baru" />
+            <button type="submit">Reset password</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

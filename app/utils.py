@@ -22,3 +22,12 @@ def write_required(view):
             abort(403)
         return view(*args, **kwargs)
     return wrapper
+
+
+def superuser_required(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if current_user.role != "superuser":
+            abort(403)
+        return view(*args, **kwargs)
+    return wrapper

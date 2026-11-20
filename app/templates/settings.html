@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Pengaturan · KasRT{% endblock %}
+{% block content %}
+<h1>Pengaturan</h1>
+<form method="post" action="{{ url_for('settings.settings_save') }}">
+  {{ csrf_token() }}
+  <input type="text" name="nama_rt" value="{{ form.nama_rt }}" placeholder="Nama RT" />
+  <input type="text" name="saldo_awal_kas" value="{{ form.saldo_awal_kas }}" placeholder="Saldo awal kas (Rp)" />
+  <input type="email" name="email_ketua_rt" value="{{ form.email_ketua_rt }}" placeholder="Email Ketua RT" />
+  <input type="email" name="email_bendahara" value="{{ form.email_bendahara }}" placeholder="Email Bendahara" />
+  <label><input type="checkbox" name="tampilkan_nama_penghuni" value="1" {% if form.tampilkan_nama_penghuni == "1" %}checked{% endif %} /> Tampilkan nama penghuni di halaman warga</label>
+  <button type="submit">Simpan</button>
+</form>
+{% endblock %}
