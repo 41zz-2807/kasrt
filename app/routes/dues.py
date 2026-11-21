@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, abort, redirect, render_template, request, url_for
 from flask_login import current_user
 
@@ -7,6 +9,11 @@ from app.models.master import DuesRate, DuesType
 from app.utils import staff_required, write_required
 
 dues_bp = Blueprint("dues", __name__)
+_PERIOD_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
+
+
+def _valid_period(value):
+    return bool(_PERIOD_RE.match(value or ""))
 
 
 def _render_types(error=None, edit=None):
@@ -100,8 +107,8 @@ def dues_rates_create():
         nominal_int = int(nominal or 0)
     except (TypeError, ValueError):
         nominal_int = 0
-    if not dues_type_id or not effective_period or nominal_int <= 0:
-        return _render_rates(error="Kategori iuran, nominal, dan periode wajib valid.")
+    if not dues_type_id or not _valid_period(effective_period) or nominal_int <= 0:
+        return _render_rates(error="Kategori iuran, nominal, dan periode (YYYY-MM) wajib valid.")
     if DuesRate.query.filter_by(dues_type_id=int(dues_type_id), effective_period=effective_period).first() is not None:
         return _render_rates(error="Riwayat nominal untuk periode ini sudah ada.")
 
@@ -132,8 +139,8 @@ def dues_rates_edit(id):
         nominal_int = int(request.form.get("nominal") or 0)
     except (TypeError, ValueError):
         nominal_int = 0
-    if not dues_type_id or not effective_period or nominal_int <= 0:
-        return _render_rates(error="Kategori iuran, nominal, dan periode wajib valid.", edit=rate)
+    if not dues_type_id or not _valid_period(effective_period) or nominal_int <= 0:
+        return _render_rates(error="Kategori iuran, nominal, dan periode (YYYY-MM) wajib valid.", edit=rate)
     duplicate = DuesRate.query.filter_by(dues_type_id=int(dues_type_id), effective_period=effective_period).first()
     if duplicate is not None and duplicate.id != id:
         return _render_rates(error="Riwayat nominal untuk periode ini sudah ada.", edit=rate)

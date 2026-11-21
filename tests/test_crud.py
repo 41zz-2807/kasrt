@@ -106,6 +106,14 @@ def test_dues_rate_edit_and_delete(client, superuser):
     with client.application.app_context():
         rate = db.session.get(DuesRate, rid)
         assert (rate.nominal, rate.effective_period) == (75000, "2026-02")
+
+    bad = client.post(
+        f"/dues/rates/{rid}/edit",
+        data={"dues_type_id": str(tid), "nominal": "100", "effective_period": "2026-13", "csrf_token": token},
+    )
+    assert bad.status_code == 200
+    assert "YYYY-MM" in bad.get_data(as_text=True)
+
     assert client.post(f"/dues/rates/{rid}/delete", data={"csrf_token": token}).status_code == 302
     with client.application.app_context():
         assert db.session.get(DuesRate, rid) is None

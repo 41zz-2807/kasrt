@@ -16,7 +16,7 @@
       </select>
     </div>
     <div class="field"><label for="nominal">Nominal (Rp)</label><input id="nominal" type="number" name="nominal" min="1" placeholder="50000" required /></div>
-    <div class="field"><label for="effective_period">Periode Mulai</label><input id="effective_period" type="text" name="effective_period" placeholder="2026-01" required /></div>
+    <div class="field"><label for="effective_period">Periode Mulai</label><input id="effective_period" type="month" name="effective_period" required /></div>
     <button type="submit" class="btn btn-primary">Simpan</button>
   </form>
 </section>
@@ -35,7 +35,7 @@
       </select>
     </div>
     <div class="field"><label for="edit_nominal">Nominal (Rp)</label><input id="edit_nominal" type="number" name="nominal" min="1" value="{{ edit.nominal }}" required /></div>
-    <div class="field"><label for="edit_period">Periode Mulai</label><input id="edit_period" type="text" name="effective_period" value="{{ edit.effective_period }}" required /></div>
+    <div class="field"><label for="edit_period">Periode Mulai</label><input id="edit_period" type="month" name="effective_period" value="{{ edit.effective_period }}" required /></div>
     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
   </form>
 </section>
