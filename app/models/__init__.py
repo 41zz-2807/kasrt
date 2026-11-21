@@ -1,6 +1,8 @@
 from app.extensions import db
+from app.models.audit import AuditLog
 from app.models.finance import Invoice, PaymentAllocation, PeriodLock, Transaction
 from app.models.master import Category, DuesRate, DuesType, House, Setting
+from app.models.notification import NotificationOutbox
 from app.models.user import User
 
 __all__ = [
@@ -15,4 +17,6 @@ __all__ = [
     "Transaction",
     "PaymentAllocation",
     "PeriodLock",
+    "NotificationOutbox",
+    "AuditLog",
 ]

@@ -2,15 +2,16 @@ import logging
 import time
 
 from app import create_app
+from app.services import notification_service
 
 log = logging.getLogger("kasrt-worker")
 
 
 def run_cycle() -> None:
-    """One worker cycle: monthly invoice generation + email outbox drain."""
+    """One worker cycle: email outbox drain + monthly invoice generation."""
     app = create_app()
     with app.app_context():
-        log.info("worker cycle")
+        notification_service.process_outbox()
 
 
 def main() -> None:

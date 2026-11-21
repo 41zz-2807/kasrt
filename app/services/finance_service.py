@@ -4,6 +4,7 @@ from uuid import uuid4
 from app.extensions import db
 from app.models.master import Category, DuesRate, DuesType, House, Setting
 from app.models.finance import Invoice, PeriodLock, PaymentAllocation, Transaction
+from app.services import audit_service
 
 OPEN_STATUSES = ("belum", "sebagian")
 ACTIVE_STATUS = "aktif"
@@ -107,6 +108,7 @@ def create_pengeluaran(amount: int, keterangan: str, created_by: int, category_i
     )
     db.session.add(trx)
     db.session.commit()
+    audit_service.log_action(user_id=created_by, action="create", entity="transaction", entity_id=trx.id, after={"jenis": "pengeluaran", "jumlah": amount})
     return trx
 
 
@@ -134,6 +136,7 @@ def create_payment(
     )
     db.session.add(trx)
     db.session.commit()
+    audit_service.log_action(user_id=created_by, action="create", entity="transaction", entity_id=trx.id, after={"jenis": TRX_KIND_DUE, "jumlah": amount})
 
     leftover = amount
     bulan_list = list(bulan_list or [])
@@ -213,6 +216,7 @@ def void_transaction(transaction_id: int, user_id: int, reason: str) -> bool:
                 inv.status = "belum"
         db.session.delete(alloc)
     db.session.commit()
+    audit_service.log_action(user_id=user_id, action="void", entity="transaction", entity_id=trx.id, before={"status": ACTIVE_STATUS, "paid_amount": inv.paid_amount if inv else 0}, after={"status": "void"})
     return True
 
 
