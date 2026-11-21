@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{% block title %}KasRT{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dist/app.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/app.css', v=asset_version) }}" />
   </head>
   <body data-idle-timeout="{{ idle_timeout_seconds }}" data-idle-warning="{{ idle_warning_seconds }}">
     <header class="app-header">
@@ -27,6 +27,6 @@
       {% block content %}{% endblock %}
     </main>
     <span id="idle-countdown" class="idle-countdown" aria-live="polite"></span>
-    <script src="{{ url_for('static', filename='js/idle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/idle.js', v=asset_version) }}"></script>
   </body>
 </html>

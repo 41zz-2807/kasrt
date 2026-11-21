@@ -46,6 +46,14 @@ def test_security_headers(client):
     assert "default-src" in resp.headers["Content-Security-Policy"]
 
 
+def test_login_page_uses_cache_busted_assets(client):
+    resp = client.get("/login")
+    assert resp.status_code == 200
+    body = resp.get_data(as_text=True)
+    assert "/static/dist/app.css?v=" in body
+    assert "/static/js/idle.js?v=" in body
+
+
 def test_login_success(client, superuser):
     resp = login(client, "admin", "supersecret1")
     assert resp.status_code == 302

@@ -1,5 +1,8 @@
+import hashlib
 import logging
 import time
+from pathlib import Path
+
 from flask import Flask, redirect, request, session, url_for
 from flask_migrate import Migrate
 from flask_login import current_user, logout_user
@@ -39,6 +42,10 @@ def create_app(config_object=None):
         app.config.update(config_object)
     else:
         app.config.from_object(config_object or Config)
+    css_file = Path(app.static_folder) / "dist" / "app.css"
+    app.config["ASSET_VERSION"] = (
+        hashlib.sha256(css_file.read_bytes()).hexdigest()[:8] if css_file.exists() else "dev"
+    )
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
     db.init_app(app)
@@ -58,6 +65,7 @@ def create_app(config_object=None):
         return {
             "idle_timeout_seconds": timeout_seconds,
             "idle_warning_seconds": 60,
+            "asset_version": app.config.get("ASSET_VERSION", "dev"),
         }
 
     @app.before_request
