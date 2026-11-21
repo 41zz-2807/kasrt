@@ -6,7 +6,7 @@
   <p class="error" role="alert">{{ error }}</p>
 {% endif %}
 <form method="post" action="{{ url_for('dues.dues_types_create') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="text" name="nama" placeholder="Nama jenis iuran" required />
   <label><input type="checkbox" name="is_active" value="1" /> Aktif</label>
   <button type="submit">Simpan</button>

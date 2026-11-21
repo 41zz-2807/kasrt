@@ -6,7 +6,7 @@
   <p class="error" role="alert">{{ error }}</p>
 {% endif %}
 <form method="post" action="{{ url_for('users.users') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="text" name="username" placeholder="Username" required />
   <input type="email" name="email" placeholder="Email" />
   <select name="role" required>
@@ -33,11 +33,11 @@
         <td>{{ "Ya" if u.is_active else "Tidak" }}</td>
         <td>
           <form method="post" action="{{ url_for('users.users_toggle', id=u.id) }}">
-            {{ csrf_token() }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <button type="submit">Toggle aktif</button>
           </form>
           <form method="post" action="{{ url_for('users.users_reset_password', id=u.id) }}">
-            {{ csrf_token() }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="password" name="password" placeholder="Password baru" />
             <button type="submit">Reset password</button>
           </form>

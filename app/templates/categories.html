@@ -6,7 +6,7 @@
   <p class="error" role="alert">{{ error }}</p>
 {% endif %}
 <form method="post" action="{{ url_for('categories.categories') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="text" name="nama" placeholder="Nama kategori" required />
   <select name="jenis" required>
     <option value="masuk">Pemasukan</option>
@@ -30,7 +30,7 @@
         <td>
           {% if not c.is_system %}
             <form method="post" action="{{ url_for('categories.categories_delete', id=c.id) }}">
-              {{ csrf_token() }}
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <button type="submit">Hapus</button>
             </form>
           {% endif %}

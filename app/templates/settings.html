@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Pengaturan</h1>
 <form method="post" action="{{ url_for('settings.settings_save') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="text" name="nama_rt" value="{{ form.nama_rt }}" placeholder="Nama RT" />
   <input type="text" name="saldo_awal_kas" value="{{ form.saldo_awal_kas }}" placeholder="Saldo awal kas (Rp)" />
   <input type="email" name="email_ketua_rt" value="{{ form.email_ketua_rt }}" placeholder="Email Ketua RT" />

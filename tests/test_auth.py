@@ -1,5 +1,6 @@
 import hashlib
 import os
+import re
 import time
 
 from argon2 import PasswordHasher
@@ -52,6 +53,12 @@ def test_login_page_uses_cache_busted_assets(client):
     body = resp.get_data(as_text=True)
     assert "/static/dist/app.css?v=" in body
     assert "/static/js/idle.js?v=" in body
+
+
+def test_login_csrf_token_is_hidden(client):
+    body = client.get("/login").get_data(as_text=True)
+    assert '<input type="hidden" name="csrf_token" value="' in body
+    assert not re.search(r">\s*[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\s*<", body)
 
 
 def test_login_success(client, superuser):

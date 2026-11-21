@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Pengeluaran</h1>
 <form method="post" action="{{ url_for('expenses.expenses') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="number" name="amount" placeholder="Nominal (Rp)" min="1" required />
   <input type="text" name="keterangan" placeholder="Keterangan" />
   <select name="category_id" required>

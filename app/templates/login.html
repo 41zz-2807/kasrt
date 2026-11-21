@@ -6,7 +6,7 @@
   <p class="error" role="alert">{{ error }}</p>
 {% endif %}
 <form class="login-form" method="post" action="{{ url_for('auth.login') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <label>
     Username
     <input type="text" name="username" autocomplete="username" required />

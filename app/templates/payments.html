@@ -6,7 +6,7 @@
   <p class="error" role="alert">{{ error }}</p>
 {% endif %}
 <form method="post" action="{{ url_for('payments.payments') }}">
-  {{ csrf_token() }}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <select name="house_id" required>
     <option value="">Pilih rumah</option>
     {% for h in houses %}
