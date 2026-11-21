@@ -53,6 +53,8 @@ def test_login_page_uses_cache_busted_assets(client):
     body = resp.get_data(as_text=True)
     assert "/static/dist/app.css?v=" in body
     assert "/static/js/idle.js?v=" in body
+    assert "/static/manifest.webmanifest?v=" in body
+    assert "/static/favicon-192.png?v=" in body
 
 
 def test_login_csrf_token_is_hidden(client):
