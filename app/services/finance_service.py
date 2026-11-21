@@ -204,9 +204,11 @@ def void_transaction(transaction_id: int, user_id: int, reason: str) -> bool:
     trx.voided_by = user_id
     trx.voided_at = _now()
     allocations = PaymentAllocation.query.filter_by(transaction_id=trx.id).all()
+    before_paid = 0
     for alloc in allocations:
         inv = db.session.get(Invoice, alloc.invoice_id)
         if inv is not None:
+            before_paid += inv.paid_amount
             inv.paid_amount = max(0, inv.paid_amount - alloc.amount)
             if inv.paid_amount >= inv.nominal:
                 inv.status = "lunas"
@@ -216,7 +218,7 @@ def void_transaction(transaction_id: int, user_id: int, reason: str) -> bool:
                 inv.status = "belum"
         db.session.delete(alloc)
     db.session.commit()
-    audit_service.log_action(user_id=user_id, action="void", entity="transaction", entity_id=trx.id, before={"status": ACTIVE_STATUS, "paid_amount": inv.paid_amount if inv else 0}, after={"status": "void"})
+    audit_service.log_action(user_id=user_id, action="void", entity="transaction", entity_id=trx.id, before={"status": ACTIVE_STATUS, "paid_amount": before_paid}, after={"status": "void"})
     return True
 
 

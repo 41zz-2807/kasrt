@@ -5,7 +5,7 @@
 <section class="card">
   <div class="card-head"><div><h2 class="card-title">Catat Pengeluaran</h2><p class="card-subtitle">Setiap pengeluaran akan mengurangi saldo kas</p></div></div>
   {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
-  <form method="post" action="{{ url_for('expenses.expenses') }}" class="form-grid">
+  <form method="post" action="{{ url_for('expenses.expenses_create') }}" class="form-grid">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="field"><label for="amount">Nominal (Rp)</label><input id="amount" type="number" name="amount" min="1" placeholder="150000" required /></div>
     <div class="field"><label for="keterangan">Keterangan</label><input id="keterangan" type="text" name="keterangan" placeholder="Contoh: Bayar listrik" /></div>
@@ -18,5 +18,34 @@
     <button type="submit" class="btn btn-primary">Catat Pengeluaran</button>
   </form>
   {% if not categories %}<p class="empty">Belum ada kategori pengeluaran. Tambahkan di menu Kategori.</p>{% endif %}
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Daftar Pengeluaran</h2><p class="card-subtitle">{{ transactions|length }} pengeluaran aktif</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>No. Transaksi</th><th>Nominal</th><th>Keterangan</th><th>Aksi</th></tr></thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr>
+          <td>#{{ t.id }}</td><td>{{ t.trx_no }}</td>
+          <td class="num">Rp {{ "{:,.0f}".format(t.jumlah|int) }}</td><td>{{ t.keterangan or '-' }}</td>
+          <td>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('payments.payments_edit', id=t.id) }}">Ubah</a>
+              <form class="inline-form" method="post" action="{{ url_for('payments.payments_void', id=t.id) }}" title="Membatalkan transaksi; data tetap tersimpan">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input type="text" name="void_reason" placeholder="Alasan hapus" />
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">Belum ada pengeluaran.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </section>
 {% endblock %}

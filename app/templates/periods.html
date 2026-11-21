@@ -12,6 +12,20 @@
   </form>
 </section>
 
+{% if edit %}
+<section class="card">
+  <div class="card-head">
+    <div><h2 class="card-title">Ubah Periode #{{ edit.id }}</h2><p class="card-subtitle">Perbarui label periode yang terkunci</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('periods.periods') }}">Batal</a>
+  </div>
+  <form method="post" action="{{ url_for('periods.period_edit', id=edit.id) }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="edit_period">Periode (YYYY-MM)</label><input id="edit_period" type="month" name="period" value="{{ edit.period }}" required /></div>
+    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+  </form>
+</section>
+{% endif %}
+
 <section class="card">
   <div class="card-head"><div><h2 class="card-title">Daftar Periode Terkunci</h2><p class="card-subtitle">{{ locks|length }} periode terkunci</p></div></div>
   <div class="table-wrap">
@@ -22,11 +36,13 @@
         <tr>
           <td><strong>{{ lock.period }}</strong></td><td>#{{ lock.locked_by }}</td><td>{{ lock.locked_at }}</td>
           <td>
-            <form class="inline-form" method="post" action="{{ url_for('periods.period_unlock') }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <input type="hidden" name="period" value="{{ lock.period }}" />
-              <button type="submit" class="btn btn-danger btn-sm">Buka Kunci</button>
-            </form>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('periods.period_edit', id=lock.id) }}">Ubah</a>
+              <form class="inline-form" method="post" action="{{ url_for('periods.period_delete', id=lock.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </div>
           </td>
         </tr>
         {% else %}

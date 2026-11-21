@@ -13,19 +13,46 @@
   </form>
 </section>
 
+{% if edit %}
+<section class="card">
+  <div class="card-head">
+    <div><h2 class="card-title">Ubah Jenis Iuran #{{ edit.id }}</h2><p class="card-subtitle">Perbarui nama atau status jenis iuran</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_types') }}">Batal</a>
+  </div>
+  <form method="post" action="{{ url_for('dues.dues_types_edit', id=edit.id) }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="edit_nama">Nama Jenis Iuran</label><input id="edit_nama" type="text" name="nama" value="{{ edit.nama }}" required /></div>
+    <label class="field field-check"><input type="checkbox" name="is_active" value="1" {% if edit.is_active %}checked{% endif %} /> Aktif</label>
+    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+  </form>
+</section>
+{% endif %}
+
 <section class="card">
   <div class="card-head"><div><h2 class="card-title">Daftar Jenis Iuran</h2><p class="card-subtitle">{{ dues_types|length }} jenis terdaftar</p></div>
     <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_rates') }}">Lihat Nominal →</a>
   </div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>ID</th><th>Nama</th><th>Status</th></tr></thead>
+      <thead><tr><th>ID</th><th>Nama</th><th>Status</th><th>Aksi</th></tr></thead>
       <tbody>
         {% for t in dues_types %}
-        <tr><td>#{{ t.id }}</td><td><strong>{{ t.nama }}</strong></td>
-          <td><span class="badge {{ 'badge-success' if t.is_active else 'badge-muted' }}">{{ 'Aktif' if t.is_active else 'Nonaktif' }}</span></td></tr>
+        <tr>
+          <td>#{{ t.id }}</td>
+          <td><strong>{{ t.nama }}</strong></td>
+          <td><span class="badge {{ 'badge-success' if t.is_active else 'badge-muted' }}">{{ 'Aktif' if t.is_active else 'Nonaktif' }}</span></td>
+          <td>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_types_edit', id=t.id) }}">Ubah</a>
+              <form class="inline-form" method="post" action="{{ url_for('dues.dues_types_delete', id=t.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
         {% else %}
-        <tr><td colspan="3" class="empty">Belum ada jenis iuran.</td></tr>
+        <tr><td colspan="4" class="empty">Belum ada jenis iuran.</td></tr>
         {% endfor %}
       </tbody>
     </table>

@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from app.extensions import db
+from app.models.finance import Transaction
 from app.models.master import Category
 from app.services import finance_service
 from app.utils import staff_required, write_required
@@ -13,7 +13,8 @@ expenses_bp = Blueprint("expenses", __name__)
 @staff_required
 def expenses():
     categories = Category.query.filter_by(jenis="keluar").order_by(Category.id).all()
-    return render_template("expenses.html", categories=categories, error=None)
+    transactions = Transaction.query.filter_by(jenis="pengeluaran", status="aktif").order_by(Transaction.id.desc()).all()
+    return render_template("expenses.html", categories=categories, transactions=transactions, error=None)
 
 
 @expenses_bp.route("/expenses", methods=["POST"])

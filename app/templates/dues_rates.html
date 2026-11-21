@@ -21,16 +21,50 @@
   </form>
 </section>
 
+{% if edit %}
+<section class="card">
+  <div class="card-head">
+    <div><h2 class="card-title">Ubah Nominal #{{ edit.id }}</h2><p class="card-subtitle">Perbarui jenis, nominal, atau periode berlaku</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_rates') }}">Batal</a>
+  </div>
+  <form method="post" action="{{ url_for('dues.dues_rates_edit', id=edit.id) }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="edit_type">Jenis Iuran</label>
+      <select id="edit_type" name="dues_type_id" required>
+        {% for t in dues_types %}<option value="{{ t.id }}" {% if t.id == edit.dues_type_id %}selected{% endif %}>{{ t.nama }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label for="edit_nominal">Nominal (Rp)</label><input id="edit_nominal" type="number" name="nominal" min="1" value="{{ edit.nominal }}" required /></div>
+    <div class="field"><label for="edit_period">Periode Mulai</label><input id="edit_period" type="text" name="effective_period" value="{{ edit.effective_period }}" required /></div>
+    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+  </form>
+</section>
+{% endif %}
+
 <section class="card">
   <div class="card-head"><div><h2 class="card-title">Riwayat Nominal</h2><p class="card-subtitle">{{ rates|length }} catatan riwayat</p></div></div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>ID</th><th>Jenis Iuran</th><th>Nominal</th><th>Mulai Berlaku</th></tr></thead>
+      <thead><tr><th>ID</th><th>Jenis Iuran</th><th>Nominal</th><th>Mulai Berlaku</th><th>Aksi</th></tr></thead>
       <tbody>
         {% for r in rates %}
-        <tr><td>#{{ r.id }}</td><td>{{ r.dues_type_id }}</td><td class="num">Rp {{ "{:,.0f}".format(r.nominal|int) }}</td><td>{{ r.effective_period }}</td></tr>
+        <tr>
+          <td>#{{ r.id }}</td>
+          <td>{{ r.dues_type_id }}</td>
+          <td class="num">Rp {{ "{:,.0f}".format(r.nominal|int) }}</td>
+          <td>{{ r.effective_period }}</td>
+          <td>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_rates_edit', id=r.id) }}">Ubah</a>
+              <form class="inline-form" method="post" action="{{ url_for('dues.dues_rates_delete', id=r.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
         {% else %}
-        <tr><td colspan="4" class="empty">Belum ada riwayat nominal.</td></tr>
+        <tr><td colspan="5" class="empty">Belum ada riwayat nominal.</td></tr>
         {% endfor %}
       </tbody>
     </table>

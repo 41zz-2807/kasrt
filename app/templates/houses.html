@@ -16,11 +16,29 @@
   </form>
 </section>
 
+{% if edit %}
+<section class="card">
+  <div class="card-head">
+    <div><h2 class="card-title">Ubah Rumah #{{ edit.id }}</h2><p class="card-subtitle">Perbarui data rumah yang sudah terdaftar</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('houses.houses') }}">Batal</a>
+  </div>
+  <form method="post" action="{{ url_for('houses.houses_edit', id=edit.id) }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="edit_blok">Blok</label><input id="edit_blok" type="text" name="blok" value="{{ edit.blok }}" required /></div>
+    <div class="field"><label for="edit_nomor">Nomor</label><input id="edit_nomor" type="text" name="nomor" value="{{ edit.nomor }}" required /></div>
+    <div class="field"><label for="edit_nama">Nama Penghuni</label><input id="edit_nama" type="text" name="nama_penghuni" value="{{ edit.nama_penghuni }}" required /></div>
+    <div class="field"><label for="edit_start">Mulai Periode</label><input id="edit_start" type="date" name="start_period" value="{{ edit.start_period or '' }}" /></div>
+    <label class="field field-check"><input type="checkbox" name="is_active" value="1" {% if edit.is_active %}checked{% endif %} /> Aktif</label>
+    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+  </form>
+</section>
+{% endif %}
+
 <section class="card">
   <div class="card-head"><div><h2 class="card-title">Daftar Rumah</h2><p class="card-subtitle">{{ houses|length }} rumah terdaftar</p></div></div>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>Blok</th><th>Nomor</th><th>Nama Penghuni</th><th>Status</th><th>Mulai</th></tr></thead>
+      <thead><tr><th>Blok</th><th>Nomor</th><th>Nama Penghuni</th><th>Status</th><th>Mulai</th><th>Aksi</th></tr></thead>
       <tbody>
         {% for h in houses %}
         <tr>
@@ -29,9 +47,18 @@
           <td>{{ h.nama_penghuni }}</td>
           <td><span class="badge {{ 'badge-success' if h.is_active else 'badge-muted' }}">{{ 'Aktif' if h.is_active else 'Nonaktif' }}</span></td>
           <td>{{ h.start_period or '-' }}</td>
+          <td>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('houses.houses_edit', id=h.id) }}">Ubah</a>
+              <form class="inline-form" method="post" action="{{ url_for('houses.houses_delete', id=h.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+              </form>
+            </div>
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="5" class="empty">Belum ada rumah. Tambahkan rumah pertama di atas.</td></tr>
+        <tr><td colspan="6" class="empty">Belum ada rumah. Tambahkan rumah pertama di atas.</td></tr>
         {% endfor %}
       </tbody>
     </table>
