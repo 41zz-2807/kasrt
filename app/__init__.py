@@ -63,7 +63,7 @@ def create_app(config_object=None):
     @app.before_request
     def check_session():
         endpoint = request.endpoint or ""
-        if endpoint in PUBLIC_ENDPOINTS or endpoint.startswith("static."):
+        if endpoint in PUBLIC_ENDPOINTS or endpoint == "static" or endpoint.startswith("static."):
             return None
         if not current_user.is_authenticated:
             return redirect(url_for("auth.login"))
