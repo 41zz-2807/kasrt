@@ -2,5 +2,13 @@
 {% block title %}Dashboard · KasRT{% endblock %}
 {% block content %}
 <h1>Dashboard</h1>
-<p>Selamat datang, {{ user.username }}.</p>
+<p>Saldo kas: Rp {{ saldo_kas | int }}</p>
+<p>Pemasukan bulan {{ period }}: Rp {{ pemasukan_bulan | int }}</p>
+<p>Pengeluaran bulan {{ period }}: Rp {{ pengeluaran_bulan | int }}</p>
+<p>Rumah menunggak: {{ open_unpaid }}</p>
+<ul>
+  {% for row in chart %}
+    <li>{{ row[0] }}: pemasukan Rp {{ row[1] | int }}, pengeluaran Rp {{ row[2] | int }}</li>
+  {% endfor %}
+</ul>
 {% endblock %}

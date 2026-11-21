@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Pengeluaran · KasRT{% endblock %}
+{% block content %}
+<h1>Pengeluaran</h1>
+<form method="post" action="{{ url_for('expenses.expenses') }}">
+  {{ csrf_token() }}
+  <input type="number" name="amount" placeholder="Nominal (Rp)" min="1" required />
+  <input type="text" name="keterangan" placeholder="Keterangan" />
+  <select name="category_id" required>
+    <option value="">Pilih kategori</option>
+    {% for c in categories %}
+      <option value="{{ c.id }}">{{ c.nama }} ({{ c.jenis }})</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Catat Pengeluaran</button>
+</form>
+{% endblock %}

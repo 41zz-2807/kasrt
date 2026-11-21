@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Kunci Periode · KasRT{% endblock %}
+{% block content %}
+<h1>Kunci Periode</h1>
+<form method="post" action="{{ url_for('periods.period_lock') }}">
+  {{ csrf_token() }}
+  <input type="month" name="period" required />
+  <button type="submit">Kunci</button>
+</form>
+{% endblock %}

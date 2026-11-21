@@ -48,7 +48,7 @@ def payments_create():
 @payments_bp.route("/payments/<int:id>/void", methods=["POST"])
 @write_required
 def payments_void(id):
-    ok, err = finance_service.void_transaction(id, user_id=current_user.id, reason=request.form.get("void_reason") or "")
+    ok = finance_service.void_transaction(id, user_id=current_user.id, reason=request.form.get("void_reason") or "")
     if not ok:
-        return err or "Gagal membatalkan transaksi.", 400
+        return "Gagal membatalkan transaksi.", 400
     return redirect(url_for("payments.payments"))

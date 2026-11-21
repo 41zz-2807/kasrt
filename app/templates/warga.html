@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Warga · KasRT{% endblock %}
+{% block content %}
+<h1>Warga</h1>
+<p>Saldo kas: Rp {{ saldo_kas | int }}</p>
+<p>Pemasukan bulan {{ period }}: Rp {{ pemasukan | int }}</p>
+<p>Pengeluaran bulan {{ period }}: Rp {{ pengeluaran | int }}</p>
+
+<h2>Transaksi Aktif</h2>
+<table>
+  <thead>
+    <tr><th>ID</th><th>Jenis</th><th>Rumah</th><th>Jumlah</th><th>Keterangan</th></tr>
+  </thead>
+  <tbody>
+    {% for t in transactions %}
+      <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.jenis }}</td>
+        <td>{{ t.house_id }}</td>
+        <td>{{ t.jumlah }}</td>
+        <td>{{ t.keterangan }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Status Iuran (blok/nomor)</h2>
+<table>
+  <thead>
+    <tr><th>Rumah</th><th>Periode</th><th>Status</th><th>Sisa</th></tr>
+  </thead>
+  <tbody>
+    {% for inv in open_invoices %}
+      <tr>
+        <td>{{ inv.house_id }}</td>
+        <td>{{ inv.period }}</td>
+        <td>{{ inv.status }}</td>
+        <td>{{ inv.nominal - inv.paid_amount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

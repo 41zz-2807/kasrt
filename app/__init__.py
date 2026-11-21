@@ -16,6 +16,10 @@ from app.routes import categories as categories_routes
 from app.routes import users as users_routes
 from app.routes import settings as settings_routes
 from app.routes import payments as payments_routes
+from app.routes import expenses as expenses_routes
+from app.routes import periods as periods_routes
+from app.routes import warga as warga_routes
+from app.routes import rekap as rekap_routes
 from app.routes import health as health_routes
 
 migrate = Migrate()
@@ -113,4 +117,8 @@ def create_app(config_object=None):
     app.register_blueprint(users_routes.users_bp)
     app.register_blueprint(settings_routes.settings_bp)
     app.register_blueprint(payments_routes.payments_bp)
+    app.register_blueprint(expenses_routes.expenses_bp)
+    app.register_blueprint(periods_routes.periods_bp)
+    app.register_blueprint(warga_routes.warga_bp)
+    app.register_blueprint(rekap_routes.rekap_bp)
     return app

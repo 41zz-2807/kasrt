@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from app.extensions import db
-from app.models.master import Category, DuesRate, DuesType, House
+from app.models.master import Category, DuesRate, DuesType, House, Setting
 from app.models.finance import Invoice, PeriodLock, PaymentAllocation, Transaction
 
 OPEN_STATUSES = ("belum", "sebagian")
@@ -90,6 +90,24 @@ def _next_period(period: str) -> str:
     if month > 12:
         year, month = year + 1, 1
     return f"{year:04d}-{month:02d}"
+
+
+def create_pengeluaran(amount: int, keterangan: str, created_by: int, category_id: int = None, house_id: int = None) -> Transaction:
+    trx = Transaction(
+        trx_no=_trx_no(),
+        tanggal=_now(),
+        jenis="pengeluaran",
+        category_id=category_id,
+        house_id=house_id,
+        jumlah=amount,
+        keterangan=keterangan or "Pengeluaran",
+        status="aktif",
+        receipt_no=None,
+        created_by=created_by,
+    )
+    db.session.add(trx)
+    db.session.commit()
+    return trx
 
 
 def create_payment(
@@ -196,3 +214,54 @@ def void_transaction(transaction_id: int, user_id: int, reason: str) -> bool:
         db.session.delete(alloc)
     db.session.commit()
     return True
+
+
+def saldo_kas() -> int:
+    awal = 0
+    setting = Setting.query.filter_by(key="saldo_awal_kas").first()
+    if setting is not None:
+        try:
+            awal = int(setting.value or 0)
+        except (TypeError, ValueError):
+            awal = 0
+    aktif = [t for t in Transaction.query.filter(Transaction.status == ACTIVE_STATUS).all() if t.jenis in ("iuran", "non_rutin")]
+    keluar = [t for t in Transaction.query.filter(Transaction.status == ACTIVE_STATUS).all() if t.jenis == "pengeluaran"]
+    masuk = sum(t.jumlah for t in aktif)
+    pengeluaran = sum(t.jumlah for t in keluar)
+    return awal + masuk - pengeluaran
+
+
+def open_unpaid_houses() -> int:
+    rows = db.session.query(Invoice.house_id).filter(Invoice.status.in_(OPEN_STATUSES)).distinct().all()
+    return len(rows)
+
+
+def rekap_bulanan(period: str):
+    """Return (pemasukan, pengeluaran) aktif for period 'YYYY-MM'."""
+    start = f"{period}-01"
+    end = f"{period}-32"
+    pemasukan = 0
+    pengeluaran = 0
+    for t in db.session.query(Transaction).filter(Transaction.status == ACTIVE_STATUS).all():
+        if not (start <= t.tanggal.strftime("%Y-%m-%d") <= end):
+            continue
+        if t.jenis in ("iuran", "non_rutin"):
+            pemasukan += t.jumlah
+        elif t.jenis == "pengeluaran":
+            pengeluaran += t.jumlah
+    return pemasukan, pengeluaran
+
+
+def rekap_6_bulan():
+    result = []
+    now = datetime.now()
+    year, month = now.year, now.month
+    for _ in range(5, -1, -1):
+        period = f"{year:04d}-{month:02d}"
+        pemasukan, pengeluaran = rekap_bulanan(period)
+        result.append((period, pemasukan, pengeluaran))
+        month -= 1
+        if month == 0:
+            month = 12
+            year -= 1
+    return result
