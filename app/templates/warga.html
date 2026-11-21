@@ -1,43 +1,45 @@
 {% extends "base.html" %}
 {% block title %}Warga · KasRT{% endblock %}
+{% block page_title %}Portal Warga{% endblock %}
 {% block content %}
-<h1>Warga</h1>
-<p>Saldo kas: Rp {{ saldo_kas | int }}</p>
-<p>Pemasukan bulan {{ period }}: Rp {{ pemasukan | int }}</p>
-<p>Pengeluaran bulan {{ period }}: Rp {{ pengeluaran | int }}</p>
+<div class="stats-grid">
+  <div class="stat-card"><span class="stat-icon">◈</span><p class="stat-label">Saldo Kas</p><p class="stat-value">Rp {{ "{:,.0f}".format(saldo_kas|int) }}</p></div>
+  <div class="stat-card"><span class="stat-icon green">↗</span><p class="stat-label">Pemasukan {{ period }}</p><p class="stat-value">Rp {{ "{:,.0f}".format(pemasukan|int) }}</p></div>
+  <div class="stat-card"><span class="stat-icon rose">↘</span><p class="stat-label">Pengeluaran {{ period }}</p><p class="stat-value">Rp {{ "{:,.0f}".format(pengeluaran|int) }}</p></div>
+</div>
 
-<h2>Transaksi Aktif</h2>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Jenis</th><th>Rumah</th><th>Jumlah</th><th>Keterangan</th></tr>
-  </thead>
-  <tbody>
-    {% for t in transactions %}
-      <tr>
-        <td>{{ t.id }}</td>
-        <td>{{ t.jenis }}</td>
-        <td>{{ t.house_id }}</td>
-        <td>{{ t.jumlah }}</td>
-        <td>{{ t.keterangan }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Transaksi Aktif</h2><p class="card-subtitle">Transaksi terkini yang tercatat</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Jenis</th><th>Rumah</th><th>Nominal</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr><td>#{{ t.id }}</td><td><span class="badge">{{ t.jenis }}</span></td><td>#{{ t.house_id }}</td>
+          <td class="num">Rp {{ "{:,.0f}".format(t.jumlah|int) }}</td><td>{{ t.keterangan or '-' }}</td></tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">Belum ada transaksi aktif.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 
-<h2>Status Iuran (blok/nomor)</h2>
-<table>
-  <thead>
-    <tr><th>Rumah</th><th>Periode</th><th>Status</th><th>Sisa</th></tr>
-  </thead>
-  <tbody>
-    {% for inv in open_invoices %}
-      <tr>
-        <td>{{ inv.house_id }}</td>
-        <td>{{ inv.period }}</td>
-        <td>{{ inv.status }}</td>
-        <td>{{ inv.nominal - inv.paid_amount }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Status Iuran Warga</h2><p class="card-subtitle">Tagihan yang belum lunas per rumah</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Rumah</th><th>Periode</th><th>Status</th><th>Sisa Tagihan</th></tr></thead>
+      <tbody>
+        {% for inv in open_invoices %}
+        <tr><td>#{{ inv.house_id }}</td><td>{{ inv.period }}</td>
+          <td><span class="badge {{ 'badge-warning' if inv.status == 'sebagian' else 'badge-danger' }}">{{ inv.status }}</span></td>
+          <td class="num">Rp {{ "{:,.0f}".format((inv.nominal|int) - (inv.paid_amount|int)) }}</td></tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">Semua tagihan sudah lunas 🎉</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

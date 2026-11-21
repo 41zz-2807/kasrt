@@ -1,35 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Riwayat Iuran · KasRT{% endblock %}
+{% block page_title %}Riwayat Nominal Iuran{% endblock %}
 {% block content %}
-<h1>Riwayat Nominal Iuran</h1>
-{% if error %}
-  <p class="error" role="alert">{{ error }}</p>
-{% endif %}
-<form method="post" action="{{ url_for('dues.dues_rates_create') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <select name="dues_type_id" required>
-    <option value="">Pilih jenis iuran</option>
-    {% for t in dues_types %}
-      <option value="{{ t.id }}">{{ t.nama }}</option>
-    {% endfor %}
-  </select>
-  <input type="number" name="nominal" placeholder="Nominal (Rp)" min="1" required />
-  <input type="text" name="effective_period" placeholder="Periode mulai (YYYY-MM)" required />
-  <button type="submit">Simpan</button>
-</form>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Jenis Iuran</th><th>Nominal</th><th>Periode</th></tr>
-  </thead>
-  <tbody>
-    {% for r in rates %}
-      <tr>
-        <td>{{ r.id }}</td>
-        <td>{{ r.dues_type_id }}</td>
-        <td>{{ r.nominal }}</td>
-        <td>{{ r.effective_period }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Tambah Nominal Baru</h2><p class="card-subtitle">Nominal berlaku mulai periode tertentu</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_types') }}">← Jenis Iuran</a>
+  </div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('dues.dues_rates_create') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="dues_type_id">Jenis Iuran</label>
+      <select id="dues_type_id" name="dues_type_id" required>
+        <option value="">Pilih jenis iuran</option>
+        {% for t in dues_types %}<option value="{{ t.id }}">{{ t.nama }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label for="nominal">Nominal (Rp)</label><input id="nominal" type="number" name="nominal" min="1" placeholder="50000" required /></div>
+    <div class="field"><label for="effective_period">Periode Mulai</label><input id="effective_period" type="text" name="effective_period" placeholder="2026-01" required /></div>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Riwayat Nominal</h2><p class="card-subtitle">{{ rates|length }} catatan riwayat</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Jenis Iuran</th><th>Nominal</th><th>Mulai Berlaku</th></tr></thead>
+      <tbody>
+        {% for r in rates %}
+        <tr><td>#{{ r.id }}</td><td>{{ r.dues_type_id }}</td><td class="num">Rp {{ "{:,.0f}".format(r.nominal|int) }}</td><td>{{ r.effective_period }}</td></tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">Belum ada riwayat nominal.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

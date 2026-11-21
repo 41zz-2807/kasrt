@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Pengeluaran · KasRT{% endblock %}
+{% block page_title %}Pengeluaran Kas{% endblock %}
 {% block content %}
-<h1>Pengeluaran</h1>
-<form method="post" action="{{ url_for('expenses.expenses') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="number" name="amount" placeholder="Nominal (Rp)" min="1" required />
-  <input type="text" name="keterangan" placeholder="Keterangan" />
-  <select name="category_id" required>
-    <option value="">Pilih kategori</option>
-    {% for c in categories %}
-      <option value="{{ c.id }}">{{ c.nama }} ({{ c.jenis }})</option>
-    {% endfor %}
-  </select>
-  <button type="submit">Catat Pengeluaran</button>
-</form>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Catat Pengeluaran</h2><p class="card-subtitle">Setiap pengeluaran akan mengurangi saldo kas</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('expenses.expenses') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="amount">Nominal (Rp)</label><input id="amount" type="number" name="amount" min="1" placeholder="150000" required /></div>
+    <div class="field"><label for="keterangan">Keterangan</label><input id="keterangan" type="text" name="keterangan" placeholder="Contoh: Bayar listrik" /></div>
+    <div class="field"><label for="category_id">Kategori</label>
+      <select id="category_id" name="category_id" required>
+        <option value="">Pilih kategori</option>
+        {% for c in categories %}<option value="{{ c.id }}">{{ c.nama }}</option>{% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Catat Pengeluaran</button>
+  </form>
+  {% if not categories %}<p class="empty">Belum ada kategori pengeluaran. Tambahkan di menu Kategori.</p>{% endif %}
+</section>
 {% endblock %}

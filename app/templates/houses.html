@@ -1,33 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Rumah · KasRT{% endblock %}
+{% block page_title %}Data Rumah{% endblock %}
 {% block content %}
-<h1>Rumah</h1>
-{% if error %}
-  <p class="error" role="alert">{{ error }}</p>
-{% endif %}
-<form method="post" action="{{ url_for('houses.houses_create') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="text" name="blok" placeholder="Blok" required />
-  <input type="text" name="nomor" placeholder="Nomor" required />
-  <input type="text" name="nama_penghuni" placeholder="Nama penghuni" required />
-  <label><input type="checkbox" name="is_active" value="1" /> Aktif</label>
-  <input type="date" name="start_period" />
-  <button type="submit">Simpan</button>
-</form>
-<table>
-  <thead>
-    <tr><th>Blok</th><th>Nomor</th><th>Nama Penghuni</th><th>Aktif</th><th>Start</th></tr>
-  </thead>
-  <tbody>
-    {% for h in houses %}
-      <tr>
-        <td>{{ h.blok }}</td>
-        <td>{{ h.nomor }}</td>
-        <td>{{ h.nama_penghuni }}</td>
-        <td>{{ "Ya" if h.is_active else "Tidak" }}</td>
-        <td>{{ h.start_period }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Tambah Rumah</h2><p class="card-subtitle">Daftarkan blok, nomor, dan penghuni rumah</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('houses.houses_create') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="blok">Blok</label><input id="blok" type="text" name="blok" placeholder="A" required /></div>
+    <div class="field"><label for="nomor">Nomor</label><input id="nomor" type="text" name="nomor" placeholder="01" required /></div>
+    <div class="field"><label for="nama_penghuni">Nama Penghuni</label><input id="nama_penghuni" type="text" name="nama_penghuni" placeholder="Nama lengkap" required /></div>
+    <div class="field"><label for="start_period">Mulai Periode</label><input id="start_period" type="date" name="start_period" /></div>
+    <label class="field field-check"><input type="checkbox" name="is_active" value="1" checked /> Aktif</label>
+    <button type="submit" class="btn btn-primary">Simpan Rumah</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Daftar Rumah</h2><p class="card-subtitle">{{ houses|length }} rumah terdaftar</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Blok</th><th>Nomor</th><th>Nama Penghuni</th><th>Status</th><th>Mulai</th></tr></thead>
+      <tbody>
+        {% for h in houses %}
+        <tr>
+          <td><strong>{{ h.blok }}</strong></td>
+          <td>{{ h.nomor }}</td>
+          <td>{{ h.nama_penghuni }}</td>
+          <td><span class="badge {{ 'badge-success' if h.is_active else 'badge-muted' }}">{{ 'Aktif' if h.is_active else 'Nonaktif' }}</span></td>
+          <td>{{ h.start_period or '-' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">Belum ada rumah. Tambahkan rumah pertama di atas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

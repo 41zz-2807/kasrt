@@ -7,25 +7,80 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/app.css', v=asset_version) }}" />
   </head>
   <body data-idle-timeout="{{ idle_timeout_seconds }}" data-idle-warning="{{ idle_warning_seconds }}">
-    <header class="app-header">
-      <strong>KasRT</strong>
-      <span class="app-user">
-        {{ current_user.username }} · {{ current_user.role }}
-      </span>
-      <a href="{{ url_for('auth.logout') }}">Logout</a>
-    </header>
-    <main class="app-main">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <ul class="flashes">
-            {% for category, message in messages %}
-              <li>{{ message }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
+    {% if current_user.is_authenticated %}
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
+          <span class="brand-mark">K</span>
+          <span class="brand-text">
+            <strong>KasRT</strong>
+            <small>Kas Rukun Tetangga</small>
+          </span>
+        </a>
+
+        <nav class="side-nav">
+          <p class="nav-label">MENU UTAMA</p>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('dashboard.') }}" href="{{ url_for('dashboard.dashboard') }}"><span class="nav-icon">▦</span>Ringkasan</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('payments.') }}" href="{{ url_for('payments.payments') }}"><span class="nav-icon">↳</span>Pembayaran</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('expenses.') }}" href="{{ url_for('expenses.expenses') }}"><span class="nav-icon">−</span>Pengeluaran</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('rekap.') }}" href="{{ url_for('rekap.rekap') }}"><span class="nav-icon">▤</span>Rekap Kas</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('warga.') }}" href="{{ url_for('warga.warga') }}"><span class="nav-icon">◉</span>Portal Warga</a>
+
+          <p class="nav-label">DATA MASTER</p>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('houses.') }}" href="{{ url_for('houses.houses') }}"><span class="nav-icon">⌂</span>Data Rumah</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('dues.') }}" href="{{ url_for('dues.dues_types') }}"><span class="nav-icon">◈</span>Jenis &amp; Nominal Iuran</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('categories.') }}" href="{{ url_for('categories.categories') }}"><span class="nav-icon">▣</span>Kategori</a>
+
+          {% if current_user.role == 'superuser' %}
+          <p class="nav-label">ADMINISTRASI</p>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('users.') }}" href="{{ url_for('users.users') }}"><span class="nav-icon">♙</span>Pengguna</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('periods.') }}" href="{{ url_for('periods.periods') }}"><span class="nav-icon">◷</span>Kunci Periode</a>
+          <a class="nav-link {{ 'active' if request.endpoint and request.endpoint.startswith('settings.') }}" href="{{ url_for('settings.settings') }}"><span class="nav-icon">⚙</span>Pengaturan</a>
+          {% endif %}
+        </nav>
+
+        <div class="sidebar-foot">
+          <a class="nav-link" href="{{ url_for('auth.change_password') }}"><span class="nav-icon">⚿</span>Ubah Password</a>
+          <p class="sidebar-note">© 2026 KasRT · Versi 1.0</p>
+        </div>
+      </aside>
+
+      <div class="app-body">
+        <header class="topbar">
+          <div>
+            <p class="topbar-kicker">{{ current_user.role|replace('_', ' ')|title }} · {{ current_user.username }}</p>
+            <h1 class="topbar-title">{% block page_title %}Ringkasan{% endblock %}</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="avatar">{{ current_user.username[:1]|upper }}</span>
+            <a class="btn btn-ghost btn-sm" href="{{ url_for('auth.logout') }}">Keluar</a>
+          </div>
+        </header>
+
+        <main class="content">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul class="flashes">
+                {% for category, message in messages %}
+                  <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+    {% else %}
+    <div class="auth-shell">
+    {% endif %}
+
       {% block content %}{% endblock %}
-    </main>
+
+    {% if current_user.is_authenticated %}
+        </main>
+      </div>
+    </div>
+    {% else %}
+    </div>
+    {% endif %}
+
     <span id="idle-countdown" class="idle-countdown" aria-live="polite"></span>
     <script src="{{ url_for('static', filename='js/idle.js', v=asset_version) }}"></script>
   </body>

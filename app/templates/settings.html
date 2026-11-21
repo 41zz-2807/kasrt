@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Pengaturan · KasRT{% endblock %}
+{% block page_title %}Pengaturan RT{% endblock %}
 {% block content %}
-<h1>Pengaturan</h1>
-<form method="post" action="{{ url_for('settings.settings_save') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="text" name="nama_rt" value="{{ form.nama_rt }}" placeholder="Nama RT" />
-  <input type="text" name="saldo_awal_kas" value="{{ form.saldo_awal_kas }}" placeholder="Saldo awal kas (Rp)" />
-  <input type="email" name="email_ketua_rt" value="{{ form.email_ketua_rt }}" placeholder="Email Ketua RT" />
-  <input type="email" name="email_bendahara" value="{{ form.email_bendahara }}" placeholder="Email Bendahara" />
-  <label><input type="checkbox" name="tampilkan_nama_penghuni" value="1" {% if form.tampilkan_nama_penghuni == "1" %}checked{% endif %} /> Tampilkan nama penghuni di halaman warga</label>
-  <button type="submit">Simpan</button>
-</form>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Profil &amp; Pengaturan Kas</h2><p class="card-subtitle">Identitas RT, saldo awal, dan penerima notifikasi</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('settings.settings_save') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="nama_rt">Nama RT</label><input id="nama_rt" type="text" name="nama_rt" value="{{ form.nama_rt }}" placeholder="RT 01 / RW 02" /></div>
+    <div class="field"><label for="saldo_awal_kas">Saldo Awal Kas (Rp)</label><input id="saldo_awal_kas" type="text" name="saldo_awal_kas" value="{{ form.saldo_awal_kas }}" /></div>
+    <div class="field"><label for="email_ketua_rt">Email Ketua RT</label><input id="email_ketua_rt" type="email" name="email_ketua_rt" value="{{ form.email_ketua_rt }}" /></div>
+    <div class="field"><label for="email_bendahara">Email Bendahara</label><input id="email_bendahara" type="email" name="email_bendahara" value="{{ form.email_bendahara }}" /></div>
+    <label class="field field-check"><input type="checkbox" name="tampilkan_nama_penghuni" value="1" {% if form.tampilkan_nama_penghuni == "1" %}checked{% endif %} /> Tampilkan nama penghuni di portal warga</label>
+    <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+  </form>
+</section>
 {% endblock %}

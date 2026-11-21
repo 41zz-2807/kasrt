@@ -1,28 +1,34 @@
 {% extends "base.html" %}
 {% block title %}Jenis Iuran · KasRT{% endblock %}
+{% block page_title %}Jenis Iuran{% endblock %}
 {% block content %}
-<h1>Jenis Iuran</h1>
-{% if error %}
-  <p class="error" role="alert">{{ error }}</p>
-{% endif %}
-<form method="post" action="{{ url_for('dues.dues_types_create') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="text" name="nama" placeholder="Nama jenis iuran" required />
-  <label><input type="checkbox" name="is_active" value="1" /> Aktif</label>
-  <button type="submit">Simpan</button>
-</form>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Nama</th><th>Aktif</th></tr>
-  </thead>
-  <tbody>
-    {% for t in dues_types %}
-      <tr>
-        <td>{{ t.id }}</td>
-        <td>{{ t.nama }}</td>
-        <td>{{ "Ya" if t.is_active else "Tidak" }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Tambah Jenis Iuran</h2><p class="card-subtitle">Misalnya: Iuran Warga, Sumbangan, Kas Khusus</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('dues.dues_types_create') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="nama">Nama Jenis Iuran</label><input id="nama" type="text" name="nama" placeholder="Contoh: Iuran Bulanan" required /></div>
+    <label class="field field-check"><input type="checkbox" name="is_active" value="1" checked /> Aktif</label>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Daftar Jenis Iuran</h2><p class="card-subtitle">{{ dues_types|length }} jenis terdaftar</p></div>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('dues.dues_rates') }}">Lihat Nominal →</a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Nama</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for t in dues_types %}
+        <tr><td>#{{ t.id }}</td><td><strong>{{ t.nama }}</strong></td>
+          <td><span class="badge {{ 'badge-success' if t.is_active else 'badge-muted' }}">{{ 'Aktif' if t.is_active else 'Nonaktif' }}</span></td></tr>
+        {% else %}
+        <tr><td colspan="3" class="empty">Belum ada jenis iuran.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

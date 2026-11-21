@@ -1,48 +1,60 @@
 {% extends "base.html" %}
 {% block title %}Pembayaran · KasRT{% endblock %}
+{% block page_title %}Pembayaran Iuran{% endblock %}
 {% block content %}
-<h1>Pembayaran Iuran</h1>
-{% if error %}
-  <p class="error" role="alert">{{ error }}</p>
-{% endif %}
-<form method="post" action="{{ url_for('payments.payments') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <select name="house_id" required>
-    <option value="">Pilih rumah</option>
-    {% for h in houses %}
-      <option value="{{ h.id }}">{{ h.blok }}/{{ h.nomor }} — {{ h.nama_penghuni }}</option>
-    {% endfor %}
-  </select>
-  <select name="dues_type_id" required>
-    <option value="">Pilih jenis iuran</option>
-    {% for t in dues_types %}
-      <option value="{{ t.id }}">{{ t.nama }}</option>
-    {% endfor %}
-  </select>
-  <input type="number" name="amount" placeholder="Nominal (Rp)" min="1" required />
-  <input type="text" name="keterangan" placeholder="Keterangan" />
-  <select name="kelebihan">
-    <option value="B">Sumbangan warga (opsi B)</option>
-    <option value="A">Iuran bulan berikutnya (opsi A)</option>
-  </select>
-  <input type="text" name="bulan" placeholder="Koma, mis. 2026-12,2027-01 (opsional: bayar di muka)" />
-  <button type="submit">Catat Pembayaran</button>
-</form>
-<h2>Daftar Transaksi</h2>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Trx No</th><th>Jenis</th><th>Harga</th><th>Status</th></tr>
-  </thead>
-  <tbody>
-    {% for t in transactions %}
-      <tr>
-        <td>{{ t.id }}</td>
-        <td>{{ t.trx_no }}</td>
-        <td>{{ t.jenis }}</td>
-        <td>{{ t.jumlah }}</td>
-        <td>{{ t.status }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Catat Pembayaran</h2><p class="card-subtitle">Alokasi otomatis ke tagihan yang masih terbuka</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('payments.payments') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="house_id">Rumah</label>
+      <select id="house_id" name="house_id" required>
+        <option value="">Pilih rumah</option>
+        {% for h in houses %}<option value="{{ h.id }}">{{ h.blok }}/{{ h.nomor }} — {{ h.nama_penghuni }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label for="dues_type_id">Jenis Iuran</label>
+      <select id="dues_type_id" name="dues_type_id" required>
+        <option value="">Pilih jenis iuran</option>
+        {% for t in dues_types %}<option value="{{ t.id }}">{{ t.nama }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field"><label for="amount">Nominal (Rp)</label><input id="amount" type="number" name="amount" min="1" placeholder="50000" required /></div>
+    <div class="field"><label for="keterangan">Keterangan</label><input id="keterangan" type="text" name="keterangan" placeholder="Opsional" /></div>
+    <div class="field"><label for="kelebihan">Kelebihan Bayar</label>
+      <select id="kelebihan" name="kelebihan"><option value="B">Sumbangan warga</option><option value="A">Iuran bulan berikutnya</option></select>
+    </div>
+    <div class="field"><label for="bulan">Bayar di Muka</label><input id="bulan" type="text" name="bulan" placeholder="2026-12,2027-01" /></div>
+    <button type="submit" class="btn btn-primary">Catat Pembayaran</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Riwayat Transaksi</h2><p class="card-subtitle">{{ transactions|length }} transaksi tercatat</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>No. Transaksi</th><th>Jenis</th><th>Nominal</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr>
+          <td>#{{ t.id }}</td><td>{{ t.trx_no }}</td><td>{{ t.jenis }}</td>
+          <td class="num">Rp {{ "{:,.0f}".format(t.jumlah|int) }}</td>
+          <td><span class="badge {{ 'badge-success' if t.status == 'aktif' else 'badge-muted' }}">{{ t.status }}</span></td>
+          <td>
+            {% if t.status == 'aktif' %}
+            <form class="inline-form" method="post" action="{{ url_for('payments.payments_void', id=t.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="text" name="void_reason" placeholder="Alasan void" />
+              <button type="submit" class="btn btn-danger btn-sm">Void</button>
+            </form>
+            {% else %}<span class="badge badge-muted">-</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="empty">Belum ada transaksi.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

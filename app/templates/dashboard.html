@@ -1,14 +1,77 @@
 {% extends "base.html" %}
 {% block title %}Dashboard · KasRT{% endblock %}
+{% block page_title %}Ringkasan Keuangan{% endblock %}
 {% block content %}
-<h1>Dashboard</h1>
-<p>Saldo kas: Rp {{ saldo_kas | int }}</p>
-<p>Pemasukan bulan {{ period }}: Rp {{ pemasukan_bulan | int }}</p>
-<p>Pengeluaran bulan {{ period }}: Rp {{ pengeluaran_bulan | int }}</p>
-<p>Rumah menunggak: {{ open_unpaid }}</p>
-<ul>
+<div class="stats-grid">
+  <div class="stat-card">
+    <span class="stat-icon">◈</span>
+    <p class="stat-label">Saldo Kas</p>
+    <p class="stat-value">Rp {{ "{:,.0f}".format(saldo_kas|int) }}</p>
+    <p class="stat-note">Total saldo kas RT saat ini</p>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon green">↗</span>
+    <p class="stat-label">Pemasukan {{ period }}</p>
+    <p class="stat-value">Rp {{ "{:,.0f}".format(pemasukan_bulan|int) }}</p>
+    <p class="stat-note">Iuran &amp; pemasukan lainnya</p>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon rose">↘</span>
+    <p class="stat-label">Pengeluaran {{ period }}</p>
+    <p class="stat-value">Rp {{ "{:,.0f}".format(pengeluaran_bulan|int) }}</p>
+    <p class="stat-note">Seluruh pengeluaran bulan ini</p>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon amber">⌂</span>
+    <p class="stat-label">Rumah Menunggak</p>
+    <p class="stat-value">{{ open_unpaid }}</p>
+    <p class="stat-note">Perlu ditindaklanjuti</p>
+  </div>
+</div>
+
+<section class="card">
+  <div class="card-head">
+    <div>
+      <h2 class="card-title">Tren Kas 6 Bulan Terakhir</h2>
+      <p class="card-subtitle">Perbandingan pemasukan dan pengeluaran per periode</p>
+    </div>
+  </div>
+  {% set ns = namespace(max=1) %}
   {% for row in chart %}
-    <li>{{ row[0] }}: pemasukan Rp {{ row[1] | int }}, pengeluaran Rp {{ row[2] | int }}</li>
+    {% if row[1]|int > ns.max %}{% set ns.max = row[1]|int %}{% endif %}
+    {% if row[2]|int > ns.max %}{% set ns.max = row[2]|int %}{% endif %}
   {% endfor %}
-</ul>
+  {% if chart %}
+    {% for row in chart %}
+      <div class="chart-row">
+        <span class="chart-period">{{ row[0] }}</span>
+        <progress class="bar" value="{{ row[1]|int }}" max="{{ ns.max }}"></progress>
+        <progress class="bar expense" value="{{ row[2]|int }}" max="{{ ns.max }}"></progress>
+      </div>
+    {% endfor %}
+    <div class="legend">
+      <span><i class="dot"></i> Pemasukan</span>
+      <span><i class="dot rose"></i> Pengeluaran</span>
+    </div>
+  {% else %}
+    <p class="empty">Belum ada data rekap untuk 6 bulan terakhir.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div>
+      <h2 class="card-title">Akses Cepat</h2>
+      <p class="card-subtitle">Fitur yang paling sering digunakan</p>
+    </div>
+  </div>
+  <div class="action-grid">
+    <a class="action-card" href="{{ url_for('payments.payments') }}"><span class="action-icon">↳</span><span><strong>Catat Pembayaran</strong><small>Input iuran warga</small></span></a>
+    <a class="action-card" href="{{ url_for('expenses.expenses') }}"><span class="action-icon">−</span><span><strong>Catat Pengeluaran</strong><small>Input biaya operasional</small></span></a>
+    <a class="action-card" href="{{ url_for('houses.houses') }}"><span class="action-icon">⌂</span><span><strong>Data Rumah</strong><small>Kelola warga &amp; blok</small></span></a>
+    <a class="action-card" href="{{ url_for('rekap.rekap') }}"><span class="action-icon">▤</span><span><strong>Rekap Kas</strong><small>Laporan pemasukan</small></span></a>
+    <a class="action-card" href="{{ url_for('warga.warga') }}"><span class="action-icon">◉</span><span><strong>Portal Warga</strong><small>Status iuran warga</small></span></a>
+    <a class="action-card" href="{{ url_for('dues.dues_types') }}"><span class="action-icon">◈</span><span><strong>Jenis Iuran</strong><small>Atur nominal iuran</small></span></a>
+  </div>
+</section>
 {% endblock %}

@@ -1,10 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Kunci Periode · KasRT{% endblock %}
+{% block page_title %}Kunci Periode{% endblock %}
 {% block content %}
-<h1>Kunci Periode</h1>
-<form method="post" action="{{ url_for('periods.period_lock') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="month" name="period" required />
-  <button type="submit">Kunci</button>
-</form>
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Kunci Periode Baru</h2><p class="card-subtitle">Periode terkunci tidak dapat diubah kembali tanpa dibuka</p></div></div>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('periods.period_lock') }}" class="form-grid">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <div class="field"><label for="period">Periode (YYYY-MM)</label><input id="period" type="month" name="period" required /></div>
+    <button type="submit" class="btn btn-primary">Kunci Periode</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head"><div><h2 class="card-title">Daftar Periode Terkunci</h2><p class="card-subtitle">{{ locks|length }} periode terkunci</p></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Periode</th><th>Dikunci Oleh</th><th>Waktu</th><th>Aksi</th></tr></thead>
+      <tbody>
+        {% for lock in locks %}
+        <tr>
+          <td><strong>{{ lock.period }}</strong></td><td>#{{ lock.locked_by }}</td><td>{{ lock.locked_at }}</td>
+          <td>
+            <form class="inline-form" method="post" action="{{ url_for('periods.period_unlock') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="period" value="{{ lock.period }}" />
+              <button type="submit" class="btn btn-danger btn-sm">Buka Kunci</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">Belum ada periode yang dikunci.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}
