@@ -5,15 +5,18 @@ from app.extensions import db
 from app.models.finance import PeriodLock, Transaction
 from app.models.master import DuesType, House
 from app.services import finance_service
-from app.utils import staff_required, write_required
+from app.utils import paginate_query, staff_required, write_required
 
 payments_bp = Blueprint("payments", __name__)
 
 
 def _render(error=None, edit=None):
+    transactions, page, pages = paginate_query(Transaction.query.order_by(Transaction.id.desc()))
     return render_template(
         "payments.html",
-        transactions=Transaction.query.order_by(Transaction.id.desc()).all(),
+        transactions=transactions,
+        page=page,
+        pages=pages,
         houses=House.query.order_by(House.id).all(),
         dues_types=DuesType.query.order_by(DuesType.id).all(),
         error=error,

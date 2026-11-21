@@ -5,14 +5,14 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 from app.extensions import db
 from app.models.finance import Invoice, Transaction
 from app.models.master import House
-from app.utils import staff_required, write_required
+from app.utils import paginate_query, staff_required, write_required
 
 houses_bp = Blueprint("houses", __name__)
 
 
 def _render(error=None, edit=None):
-    houses = House.query.order_by(House.blok, House.nomor).all()
-    return render_template("houses.html", houses=houses, error=error, edit=edit)
+    houses, page, pages = paginate_query(House.query.order_by(House.blok, House.nomor))
+    return render_template("houses.html", houses=houses, page=page, pages=pages, error=error, edit=edit)
 
 
 @houses_bp.route("/houses", methods=["GET"])

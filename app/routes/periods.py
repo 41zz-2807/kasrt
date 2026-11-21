@@ -4,13 +4,14 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from app.extensions import db
 from app.models.finance import PeriodLock
-from app.utils import superuser_required
+from app.utils import paginate_query, superuser_required
 
 periods_bp = Blueprint("periods", __name__)
 
 
 def _render(error=None, edit=None):
-    return render_template("periods.html", locks=PeriodLock.query.order_by(PeriodLock.period).all(), error=error, edit=edit)
+    locks, page, pages = paginate_query(PeriodLock.query.order_by(PeriodLock.period))
+    return render_template("periods.html", locks=locks, page=page, pages=pages, error=error, edit=edit)
 
 
 @periods_bp.route("/periods")

@@ -2,15 +2,18 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from app.extensions import db
 from app.models.master import Category
-from app.utils import staff_required, write_required
+from app.utils import paginate_query, staff_required, write_required
 
 categories_bp = Blueprint("categories", __name__)
 
 
 def _render(error=None, edit=None, form=None):
+    categories, page, pages = paginate_query(Category.query.order_by(Category.id))
     return render_template(
         "categories.html",
-        categories=Category.query.order_by(Category.id).all(),
+        categories=categories,
+        page=page,
+        pages=pages,
         error=error,
         category_form=form,
         edit=edit,

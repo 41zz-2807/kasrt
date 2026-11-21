@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import pagination %}
 {% block title %}Pembayaran · KasRT{% endblock %}
 {% block page_title %}Pembayaran Iuran{% endblock %}
 {% block content %}
@@ -73,5 +74,6 @@
       </tbody>
     </table>
   </div>
+  {{ pagination(page, pages, 'payments.payments') }}
 </section>
 {% endblock %}

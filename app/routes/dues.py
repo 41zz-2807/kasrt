@@ -6,7 +6,7 @@ from flask_login import current_user
 from app.extensions import db
 from app.models.finance import Invoice
 from app.models.master import DuesRate, DuesType
-from app.utils import staff_required, write_required
+from app.utils import paginate_query, staff_required, write_required
 
 dues_bp = Blueprint("dues", __name__)
 _PERIOD_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
@@ -17,19 +17,27 @@ def _valid_period(value):
 
 
 def _render_types(error=None, edit=None):
+    dues_types, page, pages = paginate_query(DuesType.query.order_by(DuesType.id))
     return render_template(
         "dues_types.html",
-        dues_types=DuesType.query.order_by(DuesType.id).all(),
+        dues_types=dues_types,
+        page=page,
+        pages=pages,
         error=error,
         edit=edit,
     )
 
 
 def _render_rates(error=None, edit=None):
+    rates, rate_page, rate_pages = paginate_query(
+        DuesRate.query.order_by(DuesRate.id), param="rate_page"
+    )
     return render_template(
         "dues_rates.html",
         dues_types=DuesType.query.order_by(DuesType.id).all(),
-        rates=DuesRate.query.order_by(DuesRate.id).all(),
+        rates=rates,
+        rate_page=rate_page,
+        rate_pages=rate_pages,
         error=error,
         edit=edit,
     )

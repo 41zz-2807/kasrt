@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import pagination %}
 {% block title %}Warga · KasRT{% endblock %}
 {% block page_title %}Dashboard Warga{% endblock %}
 {% block content %}
@@ -23,13 +24,7 @@
       </tbody>
     </table>
   </div>
-  {% if pages > 1 %}
-  <div class="pagination">
-    {% if page > 1 %}<a class="btn btn-ghost btn-sm" href="{{ url_for('warga.warga', page=page - 1) }}">Sebelumnya</a>{% endif %}
-    <span>Halaman {{ page }} dari {{ pages }}</span>
-    {% if page < pages %}<a class="btn btn-ghost btn-sm" href="{{ url_for('warga.warga', page=page + 1) }}">Berikutnya</a>{% endif %}
-  </div>
-  {% endif %}
+  {{ pagination(page, pages, 'warga.warga') }}
 </section>
 
 <section class="card">
@@ -48,5 +43,6 @@
       </tbody>
     </table>
   </div>
+  {{ pagination(invoice_page, invoice_pages, 'warga.warga', 'invoice_page') }}
 </section>
 {% endblock %}

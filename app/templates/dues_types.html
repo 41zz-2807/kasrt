@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import pagination %}
 {% block title %}Jenis Iuran · KasRT{% endblock %}
 {% block page_title %}Jenis Iuran{% endblock %}
 {% block content %}
@@ -57,5 +58,6 @@
       </tbody>
     </table>
   </div>
+  {{ pagination(page, pages, 'dues.dues_types') }}
 </section>
 {% endblock %}

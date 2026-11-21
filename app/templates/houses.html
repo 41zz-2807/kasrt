@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import pagination %}
 {% block title %}Rumah · KasRT{% endblock %}
 {% block page_title %}Data Rumah{% endblock %}
 {% block content %}
@@ -63,5 +64,6 @@
       </tbody>
     </table>
   </div>
+  {{ pagination(page, pages, 'houses.houses') }}
 </section>
 {% endblock %}

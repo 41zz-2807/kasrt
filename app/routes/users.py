@@ -6,7 +6,7 @@ from flask_login import current_user
 
 from app.extensions import db
 from app.models.user import User
-from app.utils import superuser_required
+from app.utils import paginate_query, superuser_required
 
 users_bp = Blueprint("users", __name__)
 
@@ -15,7 +15,10 @@ _pwd = PasswordHasher()
 
 
 def _render(error=None, edit=None, form=None):
-    return render_template("users.html", users=User.query.order_by(User.id).all(), error=error, user_form=form, edit=edit)
+    users, page, pages = paginate_query(User.query.order_by(User.id))
+    return render_template(
+        "users.html", users=users, page=page, pages=pages, error=error, user_form=form, edit=edit
+    )
 
 
 @users_bp.route("/users", methods=["GET"])

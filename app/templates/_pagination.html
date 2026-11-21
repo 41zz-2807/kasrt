@@ -1,0 +1,9 @@
+{% macro pagination(page, pages, endpoint, param='page') %}
+{% if pages > 1 %}
+<div class="pagination">
+  {% if page > 1 %}<a class="btn btn-ghost btn-sm" href="{{ url_for(endpoint, **{param: page - 1}) }}">Sebelumnya</a>{% endif %}
+  <span>Halaman {{ page }} dari {{ pages }}</span>
+  {% if page < pages %}<a class="btn btn-ghost btn-sm" href="{{ url_for(endpoint, **{param: page + 1}) }}">Berikutnya</a>{% endif %}
+</div>
+{% endif %}
+{% endmacro %}

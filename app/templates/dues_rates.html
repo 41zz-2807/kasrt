@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_pagination.html" import pagination %}
 {% block title %}Riwayat Iuran · KasRT{% endblock %}
 {% block page_title %}Riwayat Nominal Iuran{% endblock %}
 {% block content %}
@@ -69,5 +70,6 @@
       </tbody>
     </table>
   </div>
+  {{ pagination(rate_page, rate_pages, 'dues.dues_rates', 'rate_page') }}
 </section>
 {% endblock %}

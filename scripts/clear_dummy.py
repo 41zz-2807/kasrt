@@ -36,7 +36,7 @@ def clear_dummy_data():
         if h.blok == HOUSE_BLOK or NAME_MARKER in (h.nama_penghuni or "")
     ]
     type_ids = [d.id for d in DuesType.query.all() if NAME_MARKER in d.nama]
-    category_ids = [c.id for c in Category.query.all() if NAME_MARKER in c.nama]
+    category_ids = [c.id for c in Category.query.all() if c.nama.startswith("[DEMO]")]
     trx_ids = [
         t.id for t in Transaction.query.all()
         if t.trx_no.startswith(TRX_PREFIX)

@@ -1,7 +1,8 @@
+import re
 from datetime import datetime
 
 from app.extensions import db
-from app.models import House, Invoice, Setting, Transaction, User
+from app.models import Category, House, Invoice, Setting, Transaction, User
 from scripts.clear_dummy import MARKER_KEY, clear_dummy_data
 from scripts.seed_dummy import PASSWORD, seed_dummy_data
 
@@ -35,8 +36,19 @@ def test_seed_then_clear_keeps_real_data(app):
         assert db.session.get(House, real_ids[1]) is not None
         assert db.session.get(Transaction, real_ids[2]) is not None
         assert User.query.filter_by(username="demo_admin").first().check_password(PASSWORD)
+        first_counts = (
+            User.query.count(), House.query.count(), Category.query.count(),
+            Invoice.query.count(), Transaction.query.count(),
+        )
+
+        seed_dummy_data()
+        assert (
+            User.query.count(), House.query.count(), Category.query.count(),
+            Invoice.query.count(), Transaction.query.count(),
+        ) == first_counts
 
         clear_dummy_data()
+        assert Category.query.filter(Category.nama.startswith("[DEMO]")).count() == 0
         assert User.query.filter(User.username.startswith("demo_")).count() == 0
         assert House.query.filter_by(blok="DM").count() == 0
         assert Transaction.query.filter(Transaction.trx_no.startswith("DEMO-")).count() == 0
@@ -62,3 +74,25 @@ def test_warga_dashboard_has_no_menu_and_ten_transactions(app, client):
     assert body.count("[DEMO]") == 10
     assert "Halaman 1 dari" in body
     assert "Berikutnya" in body
+
+
+def test_all_table_cards_limited_to_ten_rows(app, client):
+    with app.app_context():
+        seed_dummy_data()
+        admin_id = User.query.filter_by(username="demo_admin").first().id
+    with client.session_transaction() as sess:
+        sess["_user_id"] = str(admin_id)
+        sess["_fresh"] = True
+
+    for path in [
+        "/houses", "/dues/types", "/dues/rates", "/categories", "/users",
+        "/periods", "/payments", "/expenses", "/warga",
+    ]:
+        body = client.get(path).get_data(as_text=True)
+        tbodies = re.findall(r"<tbody>(.*?)</tbody>", body, re.S)
+        assert tbodies, path
+        for tbody in tbodies:
+            assert tbody.count("<tr") <= 10, (path, tbody.count("<tr"))
+
+    for path in ["/houses", "/payments", "/expenses", "/warga"]:
+        assert "Halaman 1 dari" in client.get(path).get_data(as_text=True), path
