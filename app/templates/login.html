@@ -1,20 +1,32 @@
 {% extends "base.html" %}
-{% block title %}Login · KasRT{% endblock %}
+{% block title %}Sign In · KasRT{% endblock %}
 {% block content %}
-<h1>Login</h1>
-{% if error %}
-  <p class="error" role="alert">{{ error }}</p>
-{% endif %}
-<form class="login-form" method="post" action="{{ url_for('auth.login') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <label>
-    Username
-    <input type="text" name="username" autocomplete="username" required />
-  </label>
-  <label>
-    Password
-    <input type="password" name="password" autocomplete="current-password" required />
-  </label>
-  <button type="submit">Login</button>
-</form>
+<div class="flex min-h-[70vh] items-center justify-center py-10">
+  <form method="post" action="{{ url_for('auth.login') }}"
+        class="login-form flex flex-col items-center gap-0 w-full px-8 py-10 text-center bg-white rounded-3xl shadow-lg">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+    <h3 class="mb-3 text-4xl font-extrabold text-gray-900">Sign In</h3>
+    <p class="mb-8 text-sm text-gray-600">Masukkan username dan password untuk melanjutkan.</p>
+
+    {% if error %}
+      <p class="error w-full mb-4 text-sm text-red-600" role="alert">{{ error }}</p>
+    {% endif %}
+
+    <label for="username" class="self-start mb-2 text-sm text-start text-gray-900">Username*</label>
+    <input id="username" type="text" name="username" autocomplete="username" required
+           placeholder="username"
+           class="flex items-center w-full px-5 py-4 mb-6 text-sm font-medium bg-gray-100 text-gray-900 border-0 outline-none placeholder:text-gray-500 rounded-2xl focus:outline-none focus:bg-gray-200 focus:ring-4 focus:ring-indigo-100" />
+
+    <label for="password" class="self-start mb-2 text-sm text-start text-gray-900">Password*</label>
+    <input id="password" type="password" name="password" autocomplete="current-password" required
+           placeholder="Enter a password"
+           class="flex items-center w-full px-5 py-4 mb-8 text-sm font-medium bg-gray-100 text-gray-900 border-0 outline-none placeholder:text-gray-500 rounded-2xl focus:outline-none focus:bg-gray-200 focus:ring-4 focus:ring-indigo-100" />
+
+    <button type="submit"
+            class="w-full px-6 py-5 text-sm font-bold leading-none text-white bg-indigo-500 rounded-2xl transition duration-300 hover:bg-indigo-600 focus:ring-4 focus:ring-indigo-100">
+      Sign In
+    </button>
+  </form>
+</div>
 {% endblock %}
