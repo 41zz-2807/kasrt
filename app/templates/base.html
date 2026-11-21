@@ -13,6 +13,7 @@
   <body data-idle-timeout="{{ idle_timeout_seconds }}" data-idle-warning="{{ idle_warning_seconds }}">
     {% if current_user.is_authenticated %}
     <div class="app-shell">
+      {% if current_user.role != 'warga' %}
       <aside class="sidebar" id="sidebar">
         <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
           <span class="brand-mark">K</span>
@@ -49,10 +50,13 @@
         </div>
       </aside>
       <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+      {% endif %}
 
       <div class="app-body">
         <header class="topbar">
+          {% if current_user.role != 'warga' %}
           <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+          {% endif %}
           <div>
             <p class="topbar-kicker">{{ current_user.role|replace('_', ' ')|title }} · {{ current_user.username }}</p>
             <h1 class="topbar-title">{% block page_title %}Ringkasan{% endblock %}</h1>

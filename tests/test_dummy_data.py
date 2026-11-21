@@ -45,3 +45,20 @@ def test_seed_then_clear_keeps_real_data(app):
         assert db.session.get(User, real_ids[0]) is not None
         assert db.session.get(House, real_ids[1]) is not None
         assert db.session.get(Transaction, real_ids[2]) is not None
+
+
+def test_warga_dashboard_has_no_menu_and_ten_transactions(app, client):
+    with app.app_context():
+        seed_dummy_data()
+        warga_id = User.query.filter_by(username="demo_warga").first().id
+    with client.session_transaction() as sess:
+        sess["_user_id"] = str(warga_id)
+        sess["_fresh"] = True
+
+    body = client.get("/warga").get_data(as_text=True)
+    assert 'id="sidebar"' not in body
+    assert 'id="menu-toggle"' not in body
+    assert "Dashboard Warga" in body
+    assert body.count("[DEMO]") == 10
+    assert "Halaman 1 dari" in body
+    assert "Berikutnya" in body

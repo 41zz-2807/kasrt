@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Warga · KasRT{% endblock %}
-{% block page_title %}Portal Warga{% endblock %}
+{% block page_title %}Dashboard Warga{% endblock %}
 {% block content %}
 <div class="stats-grid">
   <div class="stat-card"><span class="stat-icon">◈</span><p class="stat-label">Saldo Kas</p><p class="stat-value">Rp {{ "{:,.0f}".format(saldo_kas|int) }}</p></div>
@@ -23,6 +23,13 @@
       </tbody>
     </table>
   </div>
+  {% if pages > 1 %}
+  <div class="pagination">
+    {% if page > 1 %}<a class="btn btn-ghost btn-sm" href="{{ url_for('warga.warga', page=page - 1) }}">Sebelumnya</a>{% endif %}
+    <span>Halaman {{ page }} dari {{ pages }}</span>
+    {% if page < pages %}<a class="btn btn-ghost btn-sm" href="{{ url_for('warga.warga', page=page + 1) }}">Berikutnya</a>{% endif %}
+  </div>
+  {% endif %}
 </section>
 
 <section class="card">

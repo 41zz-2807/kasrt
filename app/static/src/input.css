@@ -246,6 +246,7 @@ input::placeholder { color: #94a3b8; }
 .inline-form { margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; display: inline-flex; gap: 0.35rem; }
 .row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 .row-actions input { width: 7rem; }
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem; margin-top: 0.9rem; color: #64748b; font-size: 0.8rem; }
 .card-head input[type="month"] { width: auto; max-width: 100%; }
 
 /* ---------- Tabel ---------- */
