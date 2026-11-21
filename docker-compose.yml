@@ -26,7 +26,7 @@ services:
 
   web:
     build: .
-    container_name: kasrt-web
+    container_name: kasrt-app
     restart: unless-stopped
     env_file: .env
     environment:
