@@ -70,6 +70,20 @@ def test_login_success(client, superuser):
     assert client.get("/dashboard").status_code == 200
 
 
+def test_root_redirects_after_login(client, superuser):
+    assert login(client, "admin", "supersecret1").status_code == 302
+    resp = client.get("/")
+    assert resp.status_code == 302
+    assert "/dashboard" in resp.headers["Location"]
+
+
+def test_root_redirects_warga_to_portal(client, warga):
+    assert login(client, "warga", "supersecret1").status_code == 302
+    resp = client.get("/")
+    assert resp.status_code == 302
+    assert "/warga" in resp.headers["Location"]
+
+
 def test_login_invalid_credentials(client, superuser):
     resp = login(client, "admin", "wrongpassword")
     assert resp.status_code == 200

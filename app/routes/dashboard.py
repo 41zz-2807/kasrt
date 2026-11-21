@@ -1,12 +1,19 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template
+from flask import Blueprint, redirect, render_template, url_for
 from flask_login import current_user
 
 from app.services import finance_service
 from app.utils import staff_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
+
+
+@dashboard_bp.route("/")
+def index():
+    # PWA start_url adalah "/", jadi harus ada rute untuk user yang sudah login.
+    target = "warga.warga" if current_user.role == "warga" else "dashboard.dashboard"
+    return redirect(url_for(target))
 
 
 @dashboard_bp.route("/dashboard")
