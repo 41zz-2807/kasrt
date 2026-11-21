@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{% block title %}KasRT{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/app.css', v=asset_version) }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg', v=asset_version) }}" />
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='favicon.png', v=asset_version) }}" />
   </head>
   <body data-idle-timeout="{{ idle_timeout_seconds }}" data-idle-warning="{{ idle_warning_seconds }}">
     {% if current_user.is_authenticated %}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="rumah" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e3a8a"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#ffffff"/>
+  <path d="M32 7 L57 30 H7 Z" fill="url(#rumah)"/>
+  <path d="M14 28 H50 V55 H14 Z" fill="url(#rumah)"/>
+  <path d="M27 55 V42 Q27 38 32 38 Q37 38 37 42 V55 Z" fill="#ffffff"/>
+  <rect x="18" y="34" width="9" height="9" rx="1.5" fill="#ffffff"/>
+  <rect x="37" y="34" width="9" height="9" rx="1.5" fill="#ffffff"/>
+</svg>
