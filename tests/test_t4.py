@@ -30,6 +30,10 @@ def test_dashboard_renders(client, superuser):
     ).status_code == 302
     resp = client.get("/dashboard")
     assert resp.status_code == 200
+    body = resp.get_data(as_text=True)
+    assert 'id="menu-toggle"' in body
+    assert 'id="sidebar-backdrop"' in body
+    assert "/static/js/sidebar.js?v=" in body
 
 
 def client_csrf(client):

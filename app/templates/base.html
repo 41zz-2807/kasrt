@@ -9,7 +9,7 @@
   <body data-idle-timeout="{{ idle_timeout_seconds }}" data-idle-warning="{{ idle_warning_seconds }}">
     {% if current_user.is_authenticated %}
     <div class="app-shell">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <a class="brand" href="{{ url_for('dashboard.dashboard') }}">
           <span class="brand-mark">K</span>
           <span class="brand-text">
@@ -44,9 +44,11 @@
           <p class="sidebar-note">© 2026 KasRT · Versi 1.0</p>
         </div>
       </aside>
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
       <div class="app-body">
         <header class="topbar">
+          <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar">☰</button>
           <div>
             <p class="topbar-kicker">{{ current_user.role|replace('_', ' ')|title }} · {{ current_user.username }}</p>
             <h1 class="topbar-title">{% block page_title %}Ringkasan{% endblock %}</h1>
@@ -82,6 +84,7 @@
     {% endif %}
 
     <span id="idle-countdown" class="idle-countdown" aria-live="polite"></span>
+    <script src="{{ url_for('static', filename='js/sidebar.js', v=asset_version) }}"></script>
     <script src="{{ url_for('static', filename='js/idle.js', v=asset_version) }}"></script>
   </body>
 </html>

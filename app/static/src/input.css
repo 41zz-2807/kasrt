@@ -83,6 +83,22 @@ small { font-size: 0.75rem; }
   font-size: 1rem;
   opacity: 0.9;
 }
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.6rem;
+  background-color: #f8fafc;
+  color: #334155;
+  font-family: inherit;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+.sidebar-backdrop { display: none; }
 .sidebar-foot { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.75rem; }
 .sidebar-note { margin: 0.5rem 0.75rem 0; color: #64748b; font-size: 0.7rem; }
 
@@ -339,10 +355,30 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600
 /* ---------- Responsif ---------- */
 @media (max-width: 900px) {
   .app-shell { flex-direction: column; }
-  .sidebar { position: static; width: 100%; height: auto; flex-basis: auto; padding: 1rem; }
-  .brand { padding-bottom: 0.75rem; }
-  .side-nav { display: flex; overflow-x: auto; gap: 0.35rem; padding-bottom: 0.35rem; }
-  .nav-label, .sidebar-foot, .nav-icon { display: none; }
-  .nav-link { white-space: nowrap; margin-bottom: 0; }
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+    width: 16.5rem;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 12px 0 30px rgba(15, 23, 42, 0.25);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: rgba(15, 23, 42, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .sidebar-backdrop.show { opacity: 1; pointer-events: auto; }
+  body.nav-open { overflow: hidden; }
+  .menu-toggle { display: inline-flex; }
+  .topbar { gap: 0.75rem; }
   .topbar, .content { padding-left: 1rem; padding-right: 1rem; }
 }
