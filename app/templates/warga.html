@@ -36,7 +36,7 @@
           <td><span class="badge {{ 'badge-warning' if inv.status == 'sebagian' else 'badge-danger' }}">{{ inv.status }}</span></td>
           <td class="num">Rp {{ "{:,.0f}".format((inv.nominal|int) - (inv.paid_amount|int)) }}</td></tr>
         {% else %}
-        <tr><td colspan="4" class="empty">Semua tagihan sudah lunas 🎉</td></tr>
+        <tr><td colspan="4" class="empty">Semua tagihan sudah lunas</td></tr>
         {% endfor %}
       </tbody>
     </table>
