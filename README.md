@@ -37,3 +37,19 @@ docker compose run --rm web python -m pytest tests/ -v
 docker compose build web
 docker run --rm kasrt-web python -m pytest tests/ -v
 ```
+
+## Data dummy untuk demo
+
+Seeder hanya menambah data ber-marker `demo_`, `(Demo)`, atau `[DEMO]`, sehingga
+data asli tidak tertimpa. Aman dijalankan ulang.
+
+```bash
+docker compose exec -T web python -m scripts.seed_dummy
+# login: demo_admin / Demo12345! (juga demo_ketua, demo_bendahara, demo_warga)
+```
+
+Sebelum produksi, hapus data dummy saja (admin dan transaksi asli tetap ada):
+
+```bash
+./scripts/clear_dummy.sh --yes
+```
