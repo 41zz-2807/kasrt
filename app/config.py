@@ -34,6 +34,8 @@ class Config:
 
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None
+    # Referrer-Policy: no-referrer membuat browser tidak mengirim Referer, jadi pengecekan ketat memblokir semua submit HTTPS.
+    WTF_CSRF_SSL_STRICT = False
 
     SECURITY_HEADERS = True
     CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:"
