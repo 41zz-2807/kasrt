@@ -136,6 +136,14 @@ def test_change_password_flow(client, app, superuser):
         assert db.session.get(User, uid).must_change_password is False
 
 
+def test_warga_login_redirects_to_portal(client, warga):
+    resp = login(client, "warga", "supersecret1")
+    assert resp.status_code == 302
+    assert "/warga" in resp.headers["Location"]
+    assert client.get("/warga").status_code == 200
+    assert "/warga" in client.get("/login").headers["Location"]
+
+
 def test_warga_cannot_access_staff_dashboard(client, warga):
     assert login(client, "warga", "supersecret1").status_code == 302
     assert client.get("/dashboard").status_code == 403

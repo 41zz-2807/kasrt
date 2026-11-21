@@ -4,6 +4,7 @@ from flask_limiter import Limiter
 
 from app.extensions import limiter
 from app.services import auth_service
+from app.utils import landing_url
 
 auth_bp = Blueprint("auth", __name__, url_prefix="")
 
@@ -12,7 +13,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="")
 @limiter.limit("5 per minute")
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard.dashboard"))
+        return redirect(landing_url())
 
     error = None
     if request.method == "POST":
@@ -23,7 +24,7 @@ def login():
             error = err
         else:
             login_user(user, remember=False)
-            return redirect(url_for("dashboard.dashboard"))
+            return redirect(landing_url())
 
     return render_template("login.html", error=error)
 
@@ -37,8 +38,8 @@ def logout():
 
 @auth_bp.route("/change-password", methods=["GET", "POST"])
 def change_password():
-    if current_user.must_change_password and request.method == "GET":
-        return redirect(url_for("dashboard.dashboard"))
+    if not current_user.must_change_password and request.method == "GET":
+        return redirect(landing_url())
 
     error = None
     if request.method == "POST":
@@ -49,6 +50,6 @@ def change_password():
             error = err
         else:
             flash("Password berhasil diubah.")
-            return redirect(url_for("dashboard.dashboard"))
+            return redirect(landing_url())
 
     return render_template("change_password.html", error=error)
