@@ -331,19 +331,6 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600
   color: #be123c;
   font-size: 0.875rem;
 }
-.idle-countdown {
-  position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 20;
-  padding: 0.45rem 0.75rem;
-  border-radius: 0.6rem;
-  background-color: #0f172a;
-  color: white;
-  font-size: 0.75rem;
-}
-.idle-countdown:empty { display: none; }
-
 .auth-shell {
   min-height: 100vh;
   display: flex;
